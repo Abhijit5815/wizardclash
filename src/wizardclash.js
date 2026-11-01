@@ -2342,7 +2342,24 @@ function boot(opts) {
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) { V.away = true; stop(); } else { if (Show.mode === "run") start(); if (V.away) { V.away = false; V.back = true; seen(); } }
   });
+  // Summon after Silence starts the show from scratch, as on first load: a clean arena and two fresh wizards. (Awaken after Petrify just resumes.)
+  function restart() {
+    for (const n of [...stage.children]) if (n !== ground && n !== crowd) n.remove();
+    ground.replaceChildren(); crowd.replaceChildren(); fxg.replaceChildren();
+    if (dragon) { dragon.g.remove(); dragon.sh.remove(); }
+    clones = []; bolts = []; fx = []; bubbles = []; debris = []; minions = []; sigils = []; arrows = []; graves = []; meteors = []; portals = []; motes = []; flames = [];
+    dragon = null; duel = null; tscale = 1; slowTo = 1; slowUntil = 0; cineUntil = 0; clashed = false; nextBubble = clock + 4; V.sayAt = 0;
+    document.querySelectorAll(".scorch").forEach((n) => n.classList.remove("scorch"));
+    fctx.clearRect(0, 0, innerWidth, innerHeight);
+    readWalls();
+    wiz = [makeWizard(0), makeWizard(1)];
+    nextDragon = clock + rand(30, 50);
+    wiz.forEach((w) => { if (!free(w.x, w.y, w.r)) unwedge(w); say(w, [LINES.start[w.i]]); });
+  }
+  let was = "run";
   Show.on((m) => {                                              // Petrify stops the clock and every animation; Silence also hides it all (CSS)
+    if (m === "run" && was === "off") restart();
+    was = m;
     if (m === "run") { start(); svg.unpauseAnimations?.(); fxSvg.unpauseAnimations?.(); } else { stop(); svg.pauseAnimations?.(); fxSvg.pauseAnimations?.(); }
   });
   if (Show.mode === "run") start();
