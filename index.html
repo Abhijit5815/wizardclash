@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wizard Clash</title>
+<meta name="description" content="Two wizards, shadow armies, giants and dragons fight across your web page. Drop it into any page." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap" rel="stylesheet" />
+<link rel="icon" href="data:," />
+<link rel="stylesheet" href="src/wizardclash.css" />
+<style>
+  :root { --wc-font: "IM Fell English SC", Georgia, serif; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: #f0e6d2; background: #0d0a08; font: 19px/1.6 "IM Fell English", Georgia, serif;
+    background-image: radial-gradient(1000px 560px at 50% -10%, rgba(232, 116, 59, 0.2), transparent 70%);
+    background-attachment: fixed;
+  }
+  header.top { position: sticky; top: 0; z-index: 10; padding: 14px 24px; background: rgba(13, 10, 8, 0.9); border-bottom: 1px solid #2a2118; font: 15px "IM Fell English SC", Georgia, serif; letter-spacing: 0.14em; text-transform: uppercase; color: #d9a24b; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 120px; }
+  h1, h2 { font-family: "Cinzel Decorative", Georgia, serif; line-height: 1.2; margin: 0 0 18px; }
+  h1 { font-size: clamp(30px, 6vw, 52px); }
+  h1 em { color: #d9a24b; font-style: normal; }
+  h2 { font-size: 22px; margin-top: 64px; }
+  p, li { color: #c4b49a; max-width: 62ch; }
+  code, pre { font-family: ui-monospace, Menlo, monospace; font-size: 14px; }
+  pre { background: #171210; border: 1px solid #2a2118; border-radius: 8px; padding: 16px; overflow-x: auto; max-width: 62ch; color: #f0e6d2; }
+  a { color: #d9a24b; }
+</style>
+</head>
+<body>
+<header class="top">Wizard Clash</header>
+<main>
+  <h1>Your page, but with <em>wizards</em>.</h1>
+  <p>Two wizards roam this page, dodge the text and fight with spells, shadow armies, giants and dragons. Everything you read here is a solid wall to them. Scroll fast and they will complain about it.</p>
+
+  <h2>Add it to your page</h2>
+  <p>Copy the <code>src</code> folder, then add four lines:</p>
+  <pre>&lt;link rel="stylesheet" href="src/wizardclash.css"&gt;
+&lt;script src="src/army-art.js"&gt;&lt;/script&gt;
+&lt;script src="src/dragon-art.js"&gt;&lt;/script&gt;
+&lt;script src="src/wizardclash.js" data-header=".top"&gt;&lt;/script&gt;</pre>
+  <p>That is all. No build step, no framework, no dependencies.</p>
+
+  <h2>Choose what they dodge</h2>
+  <p>By default headings, paragraphs, lists, images, buttons and anything with the class <code>wizard-wall</code> are solid. Pass your own list with <code>data-walls=".card, h1, p"</code> or <code>WizardClash.start({ walls })</code>.</p>
+
+  <h2>Visitors stay in control</h2>
+  <p>Two buttons sit in the corner. <strong>Petrify</strong> freezes everyone like statues. <strong>Silence</strong> switches the whole show off and remembers it. Anyone who prefers reduced motion never sees it at all.</p>
+
+  <h2>Make it yours</h2>
+  <p>The wizards, minions and dragons are plain vector data. Ask your coding agent to read <code>AGENTS.md</code> and swap in your own cast: a samurai and a ninja, rival footballers, your own team at work.</p>
+</main>
+<script src="src/army-art.js"></script>
+<script src="src/dragon-art.js"></script>
+<script src="src/wizardclash.js" data-header=".top"></script>
+</body>
+</html>

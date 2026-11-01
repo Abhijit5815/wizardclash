@@ -1,0 +1,115 @@
+/* Wizard Clash: styles for the arena overlay and the Petrify / Silence buttons. Override --wc-* variables to theme it. */
+/* --- wizard duel: a full-viewport overlay that never takes a click --- */
+:is(#arena, #arenafx) { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; overflow: visible; }
+:is(#arena, #arenafx) symbol { overflow: visible; }
+:is(#arena, #arenafx) .ink { fill: none; stroke: var(--wiz-ink, #d6cfc2); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+:is(#arena, #arenafx) .ink.ghost { stroke-width: 0.9; opacity: 0.4; }
+:is(#arena, #arenafx) .fill-light { fill: #060505; }   /* wizards are solid shadows now */
+:is(#arena, #arenafx) .fill-dark { fill: #060505; }
+:is(#arena, #arenafx) .bolt { fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+:is(#arena, #arenafx) .bolt polyline + polyline { stroke-width: 0.8; opacity: 0.5; }
+:is(#arena, #arenafx) .orange { stroke: #ff9a3c; }
+:is(#arena, #arenafx) .white { stroke: #f4efe6; }
+:is(#arena, #arenafx) .blue { stroke: #6fb6ff; }
+:is(#arena, #arenafx) .bolt .core { fill: #fffaf0; stroke: none; }
+:is(#arena, #arenafx) .bolt .corona { stroke-width: 1.2; opacity: 0.8; }
+:is(#arena, #arenafx) .ash { fill: #8a8174; }
+:is(#arena, #arenafx) .ash.dark { fill: #4d463e; }
+:is(#arena, #arenafx) .wand-bit { stroke: #d6cfc2; stroke-width: 1.6; stroke-linecap: round; }
+:is(#arena, #arenafx) .wand { opacity: var(--wand-o, 1); }
+:is(#arena, #arenafx) use.is-dying { --wand-o: 0; }
+:is(#arena, #arenafx) .p0 { stroke: #2fd47a; }               /* archmage: emerald */
+:is(#arena, #arenafx) .p1 { stroke: #e0243f; }               /* dark lord: crimson */
+:is(#arena, #arenafx) .burst polyline, :is(#arena, #arenafx) .burst line { fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+:is(#arena, #arenafx) .scribble { fill: none; stroke: #d6cfc2; stroke-width: 1.1; stroke-linejoin: round; }
+:is(#arena, #arenafx) use.is-enraged { --wiz-ink: #ff4a3d; }
+:is(#arena, #arenafx) use.is-hasted { --wiz-ink: #f2c94c; }
+:is(#arena, #arenafx) .dust { stroke: #8a8174; }
+:is(#arena, #arenafx) .gold { stroke: #f2c94c; }
+:is(#arena, #arenafx) .bubble { stroke-width: 1.8; fill-opacity: 0.32; filter: drop-shadow(0 0 4px currentColor); }
+:is(#arena, #arenafx) .heal { stroke: #e0243f; fill: #e0243f; color: #e0243f; }
+:is(#arena, #arenafx) .mana { stroke: #4a8cff; fill: #4a8cff; color: #4a8cff; }
+:is(#arena, #arenafx) .haste { stroke: #f2c94c; fill: #f2c94c; color: #f2c94c; }
+:is(#arena, #arenafx) .aura { fill: url(#streakGlow); }
+:is(#arena, #arenafx) .streak { fill: #f2c94c; font: 600 10px "JetBrains Mono", monospace; letter-spacing: 0.06em; text-anchor: middle; }
+:is(#arena, #arenafx) .talk path { fill: rgba(13, 10, 8, 0.9); stroke: #d6cfc2; stroke-width: 1.2; stroke-linejoin: round; }
+:is(#arena, #arenafx) .talk path + path { fill: none; stroke-width: 0.7; opacity: 0.45; }
+:is(#arena, #arenafx) .talk text { fill: #f0e6d2; font: 400 15px "IM Fell English", Georgia, serif; text-anchor: middle; }
+/* --- horde: minions, rune circles, cinematic bars --- */
+:is(#arena, #arenafx) .m0 { --mc: #000; --mf: #000; --md: #000; --ml: #000; --eye: #dfffe9; }
+:is(#arena, #arenafx) .m1 { --mc: #000; --mf: #000; --md: #000; --ml: #000; --eye: #ff5a6a; }
+:is(#arena, #arenafx) .m0 { --ink: #5f786b; }
+:is(#arena, #arenafx) .m1 { --ink: #7d5a60; }
+:is(#arena, #arenafx) .minion .ink { stroke: var(--wc-ink, #f0e6d2); stroke-width: 2; }
+:is(#arena, #arenafx) .minion .ink.ghost { stroke-width: 1; opacity: 0.4; }
+:is(#arena, #arenafx) .minion .fill-light { fill: #060505; }   /* opaque, so text never shows through a body */
+:is(#arena, #arenafx) .minion.hit { --mc: #fff; --ink: #cfc8bd; }   /* a hit flashes the outline white */
+:is(#arena, #arenafx) .k { fill: none; stroke: var(--mc); stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; }
+:is(#arena, #arenafx) .k.kt { stroke-width: 0.6; opacity: 0.8; }
+:is(#arena, #arenafx) .k.kk { stroke-width: 1.6; }
+:is(#arena, #arenafx) .kf { fill: var(--mf); stroke: var(--mc); stroke-width: 1.15; stroke-linejoin: round; stroke-linecap: round; }
+:is(#arena, #arenafx) .kd { fill: var(--md); stroke: var(--mc); stroke-width: 1.15; stroke-linejoin: round; }
+:is(#arena, #arenafx) .kl { fill: var(--ml); stroke: var(--mc); stroke-width: 0.95; stroke-linejoin: round; }
+:is(#arena, #arenafx) .kh, :is(#arena, #arenafx) .hatch { fill: url(#hatch); stroke: none; }
+:is(#arena, #arenafx) .minion .kh { display: none; }
+:is(#arena, #arenafx) .arw { fill: none; stroke: #eaf4ee; stroke-width: 0.9; stroke-linecap: round; }
+:is(#arena, #arenafx) .arwh { fill: #eaf4ee; stroke: none; }
+:is(#arena, #arenafx) .a1 .arw { stroke: #f3b4b4; }
+:is(#arena, #arenafx) .a1 .arwh { fill: #ff5a6a; }
+:is(#arena, #arenafx) .eyeb { fill: var(--eye); stroke: none; }
+:is(#arena, #arenafx) .fill-ghost { fill: rgba(0, 0, 0, 0.4); }
+:is(#arena, #arenafx) .m0 .mb, :is(#arena, #arenafx) .m1 .mb { filter: none; }   /* dark shadow figures: no rim light, only the eyes glow */
+:is(#arena, #arenafx) .minion .eyes { filter: drop-shadow(0 0 1.6px var(--eye)) drop-shadow(0 0 3.5px var(--eye)); }
+:is(#arena, #arenafx) .minion .shadow { fill: rgba(0, 0, 0, 0.55); }
+:is(#arena, #arenafx) .minion.hit .mb { filter: brightness(2); }
+:is(#arena, #arenafx) .minion.dead .mb { filter: grayscale(1) brightness(0.55); }
+:is(#arena, #arenafx) .sigil .ring { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+:is(#arena, #arenafx) .sigil .tick { stroke: inherit; stroke-width: 2; stroke-linecap: round; }
+#cine { position: fixed; inset: 0; pointer-events: none; z-index: 4; }
+#cine i { position: absolute; left: 0; right: 0; height: 0; background: #000; transition: height 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+#cine i:first-child { top: 0; }
+#cine i + i { bottom: 0; }
+#cine.on i { height: 0; }   /* letterbox bars retired: the top one hid behind the nav and the bottom one looked like a glitch */
+#cine b { position: absolute; inset: 0; opacity: 0; background: radial-gradient(ellipse at center, transparent 35%, var(--flash, #000) 150%); }
+:is(#arena, #arenafx) .bolt.p0, :is(#arena, #arenafx) .bolt.p1, :is(#arena, #arenafx) .bolt.orange, :is(#arena, #arenafx) .bolt.white, :is(#arena, #arenafx) .bolt.blue { stroke: none; }   /* parts set their own stroke */
+:is(#arena, #arenafx) .mote { stroke: none; }
+:is(#arena, #arenafx) .mote.p0 { fill: #7dffb5; }
+:is(#arena, #arenafx) .mote.p1 { fill: #ff3b57; }
+:is(#arena, #arenafx) .mote.orange { fill: #ffb04a; }
+:is(#arena, #arenafx) .mote.white { fill: #fff; }
+:is(#arena, #arenafx) .mote.blue { fill: #a9d6ff; }
+:is(#arena, #arenafx) .mote.gold { fill: #f2c94c; }
+:is(#arena, #arenafx) .mote.smoke { fill: rgba(70, 20, 34, 0.55); }
+:is(#arena, #arenafx) .shock { fill: none; stroke-width: 2.2; vector-effect: non-scaling-stroke; }
+:is(#arena, #arenafx) .shock.thin { stroke-width: 1; }
+:is(#arena, #arenafx) .minion.rallied .mb { filter: drop-shadow(0 0 3px #ffe28a) brightness(1.12); }
+:is(#arena, #arenafx) .minion.chilled .mb { filter: drop-shadow(0 0 3px #8fd0ff) brightness(1.15); }
+:is(#arena, #arenafx) .minion.chilled .ink { stroke: #bfe6ff; }
+.scorch { animation: scorch 2.3s ease-out; }
+@keyframes scorch {
+  0% { text-shadow: none; box-shadow: none; }
+  12% { text-shadow: 0 0 12px #ff7a2c, 0 0 28px #e0431f; box-shadow: 0 0 40px rgba(255, 120, 40, 0.55); }
+  100% { text-shadow: none; box-shadow: none; }
+}
+:is(#arena, #arenafx) .bars line { stroke-width: 2; stroke-linecap: round; }
+:is(#arena, #arenafx) .bars .track { stroke: rgba(214, 207, 194, 0.18); }
+:is(#arena, #arenafx) .bars .hp { stroke: #d6cfc2; }
+:is(#arena, #arenafx) .bars .mp { stroke: #8f887d; stroke-dasharray: 2 2; }
+
+#fire { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; mix-blend-mode: screen; }
+:is(#arena, #arenafx) .dmouth { fill: #1a0603; stroke: none; }
+
+/* Visitor control: freeze the show like statues, or switch it off. */
+.show-controls { position: fixed; right: 14px; bottom: 14px; z-index: 30; display: flex; gap: 6px; }
+.show-controls button {
+  font: 400 12px var(--wc-font, Georgia, serif); letter-spacing: 0.1em; text-transform: uppercase; color: var(--wc-ink-soft, #c4b49a);
+  background: rgba(13, 10, 8, 0.82); border: 1px solid var(--wc-line, #2a2118); border-radius: 999px; padding: 7px 14px; cursor: pointer;
+  backdrop-filter: blur(4px); transition: color 0.2s, border-color 0.2s;
+}
+.show-controls button:hover:not(:disabled), .show-controls button:focus-visible { color: var(--wc-accent, #d9a24b); border-color: var(--wc-accent, #d9a24b); outline: none; }
+.show-controls button[aria-pressed="true"] { color: var(--wc-accent, #d9a24b); border-color: var(--wc-accent, #d9a24b); }
+.show-controls button:disabled { opacity: 0.4; cursor: default; }
+body[data-show="off"] :is(#arena, #arenafx, #fire, #embers, .cursor-glow) { display: none; }
+body[data-show="freeze"] #arena * { animation-play-state: paused !important; }
+@media (max-width: 600px) { .show-controls { right: 10px; bottom: 10px; } .show-controls button { font-size: 10px; padding: 6px 11px; } }
+
