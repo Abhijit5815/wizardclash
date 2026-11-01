@@ -1,4 +1,5 @@
-/* Wizard Clash: styles for the arena overlay and the Petrify / Silence buttons. Override --wc-* variables to theme it. */
+/* Wizard Clash: styles for the arena overlay and the Petrify / Silence buttons. The buttons take their colours and font from the host page;
+   pin any of them with --wc-ink, --wc-ink-soft, --wc-bg, --wc-line, --wc-accent, --wc-font on :root. */
 /* --- wizard duel: a full-viewport overlay that never takes a click --- */
 :is(#arena, #arenafx) { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; overflow: visible; }
 :is(#arena, #arenafx) symbol { overflow: visible; }
@@ -102,8 +103,8 @@
 /* Visitor control: freeze the show like statues, or switch it off. */
 .show-controls { position: fixed; right: 14px; bottom: 14px; z-index: 30; display: flex; gap: 6px; }
 .show-controls button {
-  font: 400 12px var(--wc-font, Georgia, serif); letter-spacing: 0.1em; text-transform: uppercase; color: var(--wc-ink-soft, #c4b49a);
-  background: rgba(13, 10, 8, 0.82); border: 1px solid var(--wc-line, #2a2118); border-radius: 999px; padding: 7px 14px; cursor: pointer;
+  font-family: var(--wc-font, inherit); font-size: 12px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--wc-ink-soft, #c4b49a);
+  background: var(--wc-bg, rgba(13, 10, 8, 0.82)); border: 1px solid var(--wc-line, #2a2118); border-radius: 999px; padding: 7px 14px; cursor: pointer;
   backdrop-filter: blur(4px); transition: color 0.2s, border-color 0.2s;
 }
 .show-controls button:hover:not(:disabled), .show-controls button:focus-visible { color: var(--wc-accent, #d9a24b); border-color: var(--wc-accent, #d9a24b); outline: none; }

@@ -41,7 +41,8 @@ WizardClash.silence();  // switch it all off
 
 - **Petrify** freezes everyone like statues. **Silence** switches the whole show off and remembers it for next time.
 - It is decoration only: `aria-hidden`, no pointer events, and it never runs for visitors who prefer reduced motion.
-- Theme the buttons with CSS variables: `--wc-font`, `--wc-accent`, `--wc-ink`, `--wc-ink-soft`, `--wc-line`.
+- The buttons wear your page's look automatically: its text colour, background, link colour (as the accent) and font. They re-read it when you switch themes (dark mode, a `class` or `data-theme` change).
+- To pin any of it, set `--wc-ink`, `--wc-ink-soft`, `--wc-bg`, `--wc-line`, `--wc-accent` or `--wc-font` on `:root`.
 
 ## Make it yours
 

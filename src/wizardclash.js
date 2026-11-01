@@ -16,6 +16,33 @@ const Show = (() => {
   bar.setAttribute("aria-label", "Background show");
   bar.innerHTML = '<button type="button" data-do="freeze" title="Freeze everyone like statues"></button><button type="button" data-do="off" title="Switch the whole show off"></button>';
   const [bFreeze, bOff] = bar.children;
+  // The buttons wear the host page's colours and font: its text colour, its background, its link colour as the accent. A host can pin
+  // any of them with its own --wc-ink, --wc-ink-soft, --wc-bg, --wc-line, --wc-accent or --wc-font on :root. Re-read when the theme changes.
+  const probe = document.createElement("canvas").getContext("2d");
+  const rgba = (c) => {                                         // any CSS colour -> [r, g, b, a]
+    probe.fillStyle = "#000"; probe.fillStyle = c;
+    const v = probe.fillStyle;
+    if (v[0] === "#") return [parseInt(v.slice(1, 3), 16), parseInt(v.slice(3, 5), 16), parseInt(v.slice(5, 7), 16), 1];
+    const m = v.match(/[\d.]+/g).map(Number);
+    return [m[0], m[1], m[2], m[3] ?? 1];
+  };
+  const css = ([r, g, b], a) => `rgba(${r}, ${g}, ${b}, ${a})`;
+  const theme = () => {
+    const root = getComputedStyle(document.documentElement), pin = (k, v) => (root.getPropertyValue(k).trim() ? bar.style.removeProperty(k) : bar.style.setProperty(k, v));
+    const fg = rgba(getComputedStyle(document.body).color);
+    let bg = null;
+    for (let n = document.body; n && !bg; n = n.parentElement) { const c = rgba(getComputedStyle(n).backgroundColor); if (c[3] > 0.05) bg = c; }
+    if (!bg) bg = 0.2126 * fg[0] + 0.7152 * fg[1] + 0.0722 * fg[2] > 128 ? [17, 17, 17, 1] : [255, 255, 255, 1];   // no background set: the opposite of the text
+    const link = document.querySelector("a[href]"), ac = link ? rgba(getComputedStyle(link).color) : fg;
+    pin("--wc-ink", css(fg, 1)); pin("--wc-ink-soft", css(fg, 0.8)); pin("--wc-bg", css(bg, 0.88)); pin("--wc-line", css(fg, 0.28)); pin("--wc-accent", css(ac, 1));
+  };
+  let themeTimer;
+  const watchTheme = () => {
+    const again = () => { clearTimeout(themeTimer); themeTimer = setTimeout(theme, 120); };
+    matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", again);
+    new MutationObserver(again).observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style", "data-theme", "data-bs-theme", "data-mode"] });
+    new MutationObserver(again).observe(document.body, { attributes: true, attributeFilter: ["class", "style", "data-theme"] });
+  };
   const paint = () => {
     document.body.dataset.show = mode;
     bFreeze.textContent = mode === "freeze" ? "Awaken" : "Petrify";
@@ -35,7 +62,7 @@ const Show = (() => {
   return {
     get mode() { return mode; },
     on(fn) { subs.push(fn); fn(mode); },
-    mount(controls) { if (controls && !reduced) document.body.appendChild(bar); paint(); },
+    mount(controls) { if (controls && !reduced) { document.body.appendChild(bar); theme(); watchTheme(); } paint(); },
     set,
   };
 })();
