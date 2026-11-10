@@ -1,6 +1,6 @@
 /*!
- * Wizard Clash: two wizards roam your page, dodge your text and fight with spells, shadow armies, giants and dragons.
- * MIT licensed. Needs army-art.js and dragon-art.js loaded first. Plain JS, no dependencies, no build step.
+ * Wizard Clash: two wizards roam your page, dodge your text and fight with spells, shadow armies and giants.
+ * MIT licensed. Needs army-art.js loaded first. Plain JS, no dependencies, no build step.
  * Decoration only: aria-hidden, no pointer events, and it never runs under prefers-reduced-motion.
  */
 // --- Visitor control. "Petrify" freezes the whole show where it stands, like statues; "Silence" switches it off and clears it away.
@@ -330,7 +330,7 @@ function boot(opts) {
   // Entities
   // ---------------------------------------------------------------------------
   let wiz, clones = [], bolts = [], fx = [], bubbles = [], debris = [], minions = [], sigils = [];
-  let arrows = [], duel = null, graves = [], meteors = [], portals = [], dragon = null, nextDragon = 0, dragonIdx = -1;
+  let arrows = [], duel = null, graves = [], meteors = [], portals = [];
   let tscale = 1, slowTo = 1, slowUntil = 0, nowMs = 0, cineUntil = 0, clashed = false;   // slow-motion and cinematic state
   let clock = 0, F = 1, frame = 0, boil = 0, nextBubble = 4;
 
@@ -1466,7 +1466,7 @@ function boot(opts) {
 
   // ---------------------------------------------------------------------------
   // The rest of the grimoire: giants (art below), lightning chains, the staff-slam
-  // shockwave, the healing rally, the meteor storm, sling-ring portals and a dragon.
+  // shockwave, the healing rally, the meteor storm, sling-ring portals.
   // ---------------------------------------------------------------------------
   function damageWizard(w, dmg, x, y, kind) {      // a shield swallows area damage too
     if (!alive(w)) return;
@@ -1708,173 +1708,6 @@ function boot(opts) {
       }
       return true;
     });
-  }
-
-  // The dragon: a rare, neutral fly-by. It breathes fire down along its path, scorching the text,
-  // burning anything caught in the stream, then flies on.
-  // Dragon-fire: a particle fluid on its own canvas, drawn additively. Hot gas is thrown out of the mouth in a
-  // narrow cone, then drag, turbulence and buoyancy spread it out, billow it up and roll it along the ground.
-  // Each puff grows, cools from white-hot through yellow and orange to dull red, and fades. It splashes off
-  // the floor into lingering ground fire and rebounds off the text.
-  const fireCv = document.createElement("canvas");
-  fireCv.id = "fire";
-  fireCv.setAttribute("aria-hidden", "true");
-  document.body.appendChild(fireCv);
-  const fctx = fireCv.getContext("2d");
-  const sizeFire = () => {
-    const dpr = Math.min(2, devicePixelRatio || 1);
-    fireCv.width = innerWidth * dpr;
-    fireCv.height = innerHeight * dpr;
-    fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  };
-  const RAMP = [[0, [255, 250, 214]], [0.2, [255, 216, 112]], [0.45, [255, 142, 42]], [0.72, [222, 62, 22]], [1, [110, 22, 10]]];
-  const rampAt = (k) => {
-    for (let i = 1; i < RAMP.length; i++) {
-      if (k <= RAMP[i][0]) { const [k0, c0] = RAMP[i - 1], [k1, c1] = RAMP[i], u = (k - k0) / (k1 - k0); return c0.map((v, j) => Math.round(v + (c1[j] - v) * u)); }
-    }
-    return RAMP[RAMP.length - 1][1];
-  };
-  const SPRITES = Array.from({ length: 24 }, (_, i) => {
-    const [r, g, b] = rampAt(i / 23), c = document.createElement("canvas");
-    c.width = c.height = 64;
-    const x = c.getContext("2d"), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
-    gr.addColorStop(0, `rgba(${r},${g},${b},1)`);
-    gr.addColorStop(0.35, `rgba(${r},${g},${b},.55)`);
-    gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
-    x.fillStyle = gr;
-    x.fillRect(0, 0, 64, 64);
-    return c;
-  });
-  let flames = [];
-  function emitFlames(mx, my, dx, dy, sc) {
-    const S = size / 60, n = Math.round(16 * F + Math.random());
-    for (let i = 0; i < n && flames.length < 900; i++) {
-      const tongue = Math.random() < 0.14, sp = (tongue ? rand(14, 19) : rand(9, 14)) * S;
-      const ang = Math.atan2(dy, dx) + rand(-0.1, 0.1) * (tongue ? 0.5 : 1);
-      flames.push({ x: mx + rand(-3, 3), y: my + rand(-3, 3), vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, age: 0, life: tongue ? rand(0.8, 1.2) : rand(0.55, 0.95),
-        r0: rand(3, 6) * sc * 0.5, r1: rand(18, 32) * sc * 0.42 * (tongue ? 1.15 : 1), seed: Math.random() * 6.3 });
-    }
-  }
-  function drawFire(dt) {
-    fctx.clearRect(0, 0, innerWidth, innerHeight);
-    if (!flames.length) return;
-    fctx.globalCompositeOperation = "lighter";
-    const gy = maxY() + size * 0.35, born = [];
-    flames = flames.filter((p) => {
-      p.age += dt;
-      const k = p.age / p.life;
-      if (k >= 1) return false;
-      p.vx += Math.sin(p.y * 0.035 + clock * 9 + p.seed) * 0.09 * F * (0.4 + p.age * 2.2);                                 // turbulence
-      p.vy += (Math.cos(p.x * 0.035 + clock * 8 + p.seed) * 0.09 * (0.4 + p.age * 2.2) - (p.ground ? 0.012 : 0.022 + p.age * 0.06)) * F;      // and buoyancy: hot gas rises
-      const dr = Math.pow(p.ground ? 0.96 : 0.986, F);
-      p.vx *= dr; p.vy *= dr;
-      p.x += p.vx * F; p.y += p.vy * F;
-      if (p.y > gy) {                                                                                  // splashes off the floor and rolls along it
-        p.y = gy; p.vy = -Math.abs(p.vy) * 0.12; p.vx *= 1.04;
-        if (!p.ground) {
-          p.ground = true;
-          if (Math.random() < 0.18) born.push({ x: p.x + rand(-6, 6), y: gy, vx: rand(-0.4, 0.4), vy: -0.3, age: 0, life: rand(1.2, 2.2), r0: 6, r1: rand(16, 26), seed: Math.random() * 6.3, ground: true });
-        }
-      }
-      if (p.vx * p.vx + p.vy * p.vy > 1) {
-        let inside = false;
-        for (const w of walls) {
-          if (p.x > w.l && p.x < w.r && p.y > w.t && p.y < w.b) {                                      // rebounds off the text blocks...
-            inside = true;
-            if (!p.out) break;                                                                         // ...unless it was born inside one: then it just burns through
-            const dl = p.x - w.l, dR = w.r - p.x, dt2 = p.y - w.t, db = w.b - p.y, m = Math.min(dl, dR, dt2, db);
-            if (m === dl) p.x = w.l; else if (m === dR) p.x = w.r; else if (m === dt2) p.y = w.t; else p.y = w.b;
-            p.vx *= -0.35; p.vy *= -0.35;
-            break;
-          }
-        }
-        if (!inside) p.out = true;
-      }
-      const r = p.r0 + (p.r1 - p.r0) * Math.pow(k, 0.7), a = Math.min(1, k / 0.08) * Math.pow(1 - k, 0.9) * 0.6;
-      fctx.globalAlpha = a;
-      fctx.drawImage(SPRITES[Math.min(23, (k * 23) | 0)], p.x - r, p.y - r, r * 2, r * 2);
-      return true;
-    });
-    if (born.length) flames = flames.concat(born);
-    fctx.globalAlpha = 1;
-  }
-
-  // --- the dragons: three shadow silhouettes (dragon-art.js), each cut into back wing, front wing, head and a two-piece tail
-  // hung from joints; the base keeps the rest. Each has its own timing (speed, wing beat, when it breathes, how long between visits).
-  function dragonRig(def) {
-    const pc = (k, inner = "") => `<g data-r="${k}"><path d="${def.p[k]}" fill="#050403"/>${inner}</g>`;
-    return `<g transform="translate(${def.tx} ${def.ty}) scale(${-def.k} ${def.k})">${pc("wb")}${pc("wf")}<path d="${def.p.base}" fill="#050403"/>${pc("t1", pc("t2"))}`
-      + `${pc("hd", `<ellipse class="dmouth" cx="${def.mouth[0] + 16}" cy="${def.mouth[1] + 4}" rx="11" ry="7"/>`)}</g>`;
-  }
-  // Wings beat with a down-stroke that is slower than the recovery; the body bobs against them and the head and tail trail behind.
-  function poseDragon(d, t) {
-    const w = t * d.cfg.flap, R = d.rig, P = d.def.pv, rot = (k, a) => R[k].setAttribute("transform", `rotate(${a.toFixed(1)} ${P[k][0]} ${P[k][1]})`);
-    const flap = Math.sin(w) + 0.25 * Math.sin(2 * w - 0.6), sq = 0.8 + 0.2 * Math.cos(w);   // the wing foreshortens as it rises
-    const wing = (k, a, ph) => R[k].setAttribute("transform", `translate(${P[k][0]} ${P[k][1]}) rotate(${(a * Math.sin(w + ph)).toFixed(1)}) scale(1 ${(sq + 0.1 * Math.sin(w + ph)).toFixed(3)}) translate(${-P[k][0]} ${-P[k][1]})`);
-    wing("wf", 22, 0); wing("wb", 15, 0.45);
-    d.bob = -Math.cos(w + 0.3) * 5 * d.sc;                                                   // lifts on the down-stroke
-    const tw = t * 3.4;
-    rot("hd", Math.sin(t * 2.2 - 0.8) * 3 - flap * 2 + d.jaw * 9);
-    rot("t1", Math.sin(tw) * 5 + flap * 1.5); rot("t2", Math.sin(tw - 1.2) * 12);
-  }
-
-  function spawnDragon() {
-    const dir = Math.random() < 0.5 ? 1 : -1, g = el("g", { class: "dragon", filter: "url(#glow)" });
-    // Never the same dragon twice running. The art faces left, so dragonRig flips it into the right-facing frame the rest of the code expects, mouth at (116, 21).
-    const pick = (dragonIdx + 1 + Math.floor(Math.random() * (DRAGONS.length - 1))) % DRAGONS.length, def = DRAGONS[pick];
-    dragonIdx = pick;
-    g.innerHTML = dragonRig(def);
-    const sh = el("ellipse", { rx: 1, ry: 0.16, fill: "rgba(0,0,0,.4)" }, ground);
-    dragon = { g, sh, dir, jaw: 0, rig: Object.fromEntries([...g.querySelectorAll("[data-r]")].map((n) => [n.dataset.r, n])), def, cfg: def.cfg, mouth: g.querySelector(".dmouth"), glow: el("circle", { r: 150, fill: "url(#halo-orange)", opacity: 0 }, fxg), sc: (clamp(innerWidth * 0.28, 120, 400) / 113) * def.cfg.scale, x: dir > 0 ? -300 : innerWidth + 300, y: 0, t0: clock, hitAt: 0, glowAt: 0, roared: false };
-    cineUntil = Math.max(cineUntil, clock + 5);
-    slow(0.6, 0.6);
-    shake(3, 700);                                  // the roar
-  }
-  function updateDragon(dt) {
-    if (!dragon) {
-      if (clock > nextDragon && alive(wiz[0]) && alive(wiz[1]) && !duel) spawnDragon();
-      return;
-    }
-    const d = dragon, t = clock - d.t0, sc = d.sc;
-    d.x += d.dir * d.cfg.speed * F;
-    const u = d.dir > 0 ? (d.x + 300) / (innerWidth + 600) : 1 - (d.x + 300) / (innerWidth + 600);
-    d.y = top + innerHeight * (d.cfg.fy + 0.1 * Math.sin(Math.PI * clamp(u, 0, 1))) + Math.sin(t * 1.6) * 16;   // dips as it passes over the fight
-    const breathing = d.cfg.breath.some(([a, b]) => u > a && u < b);
-    d.jaw += ((breathing ? 1 : 0) - d.jaw) * (1 - Math.pow(0.82, F));        // the jaw swings open to breathe, the head tips down
-    poseDragon(d, t);
-    d.mouth.setAttribute("fill", d.jaw > 0.25 ? "#ff9a3a" : "#0a0605");
-    const tilt = d.dir * (Math.sin(t * 1.6) * 2.5 + d.jaw * 14), tr = (tilt * Math.PI) / 180;
-    d.g.setAttribute("transform", `translate(${d.x.toFixed(1)} ${(d.y + d.bob).toFixed(1)}) rotate(${tilt.toFixed(1)}) scale(${(d.dir * sc).toFixed(3)} ${sc.toFixed(3)}) translate(-60 -30)`);
-    d.sh.setAttribute("transform", `translate(${d.x.toFixed(1)} ${(innerHeight - 10).toFixed(1)}) scale(${(sc * 62).toFixed(1)} ${(sc * 62).toFixed(1)})`);
-    d.sh.setAttribute("opacity", (0.7 - (innerHeight - d.y) / innerHeight * 0.3).toFixed(2));
-    if (breathing) {
-      if (!d.roared) { d.roared = true; flash("#ff7a2c"); shake(4, 500); slow(0.7, 0.5); }
-      const rx = d.dir * 56 * sc, ry = -9 * sc, mx = d.x + rx * Math.cos(tr) - ry * Math.sin(tr), my = d.y + rx * Math.sin(tr) + ry * Math.cos(tr), ang = (32 * Math.PI) / 180, dx = d.dir * Math.cos(ang), dy = Math.sin(ang);
-      const L = clamp((maxY() + size * 0.4 - my) / dy, 160, 420), ex = mx + dx * L, ey = my + dy * L, qx = -dy, qy = dx;
-      emitFlames(mx, my, dx, dy, sc);
-      d.glow.setAttribute("cx", (mx + dx * L * 0.5).toFixed(1)); d.glow.setAttribute("cy", (my + dy * L * 0.5).toFixed(1));       // the stream lights the page
-      d.glow.setAttribute("r", (190 + Math.sin(clock * 25) * 18).toFixed(0)); d.glow.setAttribute("opacity", (0.42 + Math.random() * 0.12).toFixed(2));
-      if (Math.random() < 0.5) mote(mx + dx * rand(40, L), my + dy * rand(40, L), rand(-0.5, 0.5), rand(-1, -0.3), 0.9, rand(3, 5), "smoke", -0.02, 1.2);
-      if (Math.random() < 0.7) mote(mx + dx * rand(30, L), my + dy * rand(30, L), rand(-1, 1), rand(-2.2, -0.6), rand(0.6, 1.2), rand(0.8, 1.6), Math.random() < 0.5 ? "gold" : "orange", -0.03);   // embers
-      if (clock > d.glowAt) {                       // the ground where the fire lands keeps glowing
-        d.glowAt = clock + 0.15;
-        fx.push({ x: ex, y: ey, born: clock, life: 1.3, flat: true, node: el("circle", { cx: ex, cy: ey, r: 34, fill: "url(#halo-orange)" }, ground) });
-        impact(ex, ey, "orange", 0.35);
-      }
-      for (const w of walls) {
-        if (w.el && !w.el.classList.contains("scorch") && segHits(mx, my, ex, ey, w)) {
-          w.el.classList.add("scorch");
-          setTimeout(() => w.el.classList.remove("scorch"), 2300);
-        }
-      }
-      if (clock > d.hitAt) {                       // the stream hurts whatever stands in it
-        d.hitAt = clock + 0.35;
-        const near = (o, rad) => { const l2 = (ex - mx) ** 2 + (ey - my) ** 2, tt = clamp(((o.x - mx) * (ex - mx) + (o.y - my) * (ey - my)) / l2, 0, 1); return Math.hypot(o.x - (mx + (ex - mx) * tt), o.y - (my + (ey - my) * tt)) < rad + 0.2 * tt * Math.sqrt(l2); };   // the cone widens with distance
-        for (const w of wiz) if (alive(w) && near(w, 34)) damageWizard(w, 7, w.x, w.y, "orange");
-        for (const m of minions) if (!m.dying && near(m, 30)) { m.hp -= 10; m.flash = 0.15; burst(m.x, m.y, ["orange", "gold"], 0, 5, 0.3); if (m.hp <= 0) killMinion(m, { x: d.dir, y: 0.4 }); }
-      }
-    } else d.glow.setAttribute("opacity", 0);
-    if (d.x < -340 || d.x > innerWidth + 340) { d.g.remove(); d.glow.remove(); d.sh.remove(); dragon = null; nextDragon = clock + rand(...d.cfg.gap); }
   }
 
   const ELF = ARMY.art("elf"), RANGER = ARMY.art("ranger");
@@ -2231,7 +2064,6 @@ function boot(opts) {
   // Loop
   // ---------------------------------------------------------------------------
   function resize() {
-    sizeFire();
     size = clamp(Math.min(innerWidth, innerHeight) * 0.1, 44, 84);
     s = size / 80;
     const k = Math.min(1, size / 72);    // 72px is a 720px-tall desktop window: unchanged from there up
@@ -2268,8 +2100,6 @@ function boot(opts) {
     updateDuel(dt);
     updateMeteors();
     updatePortals();
-    updateDragon(dt);
-    drawFire(dt);
     updateMinions(dt);
     updateArrows(dt);
     updateBolts();
@@ -2293,7 +2123,6 @@ function boot(opts) {
   resize();
   readWalls();
   wiz = [makeWizard(0), makeWizard(1)];
-  nextDragon = clock + rand(30, 50);
   wiz.forEach((w) => { if (!free(w.x, w.y, w.r)) unwedge(w); say(w, [LINES.start[w.i]]); });
 
   // Poke a wizard 3 times within 2s and he turns to complain to you. The overlay takes no
@@ -2345,14 +2174,10 @@ function boot(opts) {
   function restart() {
     for (const n of [...stage.children]) if (n !== ground && n !== crowd) n.remove();
     ground.replaceChildren(); crowd.replaceChildren(); fxg.replaceChildren();
-    if (dragon) { dragon.g.remove(); dragon.sh.remove(); }
     clones = []; bolts = []; fx = []; bubbles = []; debris = []; minions = []; sigils = []; arrows = []; graves = []; meteors = []; portals = []; motes = []; flames = [];
-    dragon = null; duel = null; tscale = 1; slowTo = 1; slowUntil = 0; cineUntil = 0; clashed = false; nextBubble = clock + 4; V.sayAt = 0;
-    document.querySelectorAll(".scorch").forEach((n) => n.classList.remove("scorch"));
-    fctx.clearRect(0, 0, innerWidth, innerHeight);
+    duel = null; tscale = 1; slowTo = 1; slowUntil = 0; cineUntil = 0; clashed = false; nextBubble = clock + 4; V.sayAt = 0;
     readWalls();
     wiz = [makeWizard(0), makeWizard(1)];
-    nextDragon = clock + rand(30, 50);
     wiz.forEach((w) => { if (!free(w.x, w.y, w.r)) unwedge(w); say(w, [LINES.start[w.i]]); });
   }
   let was = "run";

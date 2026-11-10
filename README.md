@@ -1,8 +1,8 @@
 # Wizard Clash
 
-![Wizards, shadow armies and a dragon fighting across a web page](docs/demo.gif)
+![Wizards, shadow armies and a cursor dragon fighting across a web page](docs/demo.gif)
 
-Two wizards roam your page, dodge your text and fight with spells, shadow armies, giants and dragons. Every heading and paragraph
+Two wizards roam your page, dodge your text and fight with spells, shadow armies and giants. Every heading and paragraph
 is a solid wall to them. Scroll too fast and they complain about it. Drop it into any page: plain JS, no dependencies, no build step.
 
 It was born on [kasanaa.com](https://kasanaa.com). Free and open source (MIT). If it made you smile, a star is very welcome.
@@ -14,7 +14,6 @@ Copy the `src` folder next to your page, then:
 ```html
 <link rel="stylesheet" href="src/wizardclash.css">
 <script src="src/army-art.js"></script>
-<script src="src/dragon-art.js"></script>
 <script src="src/wizardclash.js" data-header=".site-header"></script>
 ```
 
@@ -59,7 +58,7 @@ WizardClash.silence();  // switch it all off
 
 ## Make it yours
 
-The wizards, minions, giants and dragons are plain vector data. Point your coding agent at [AGENTS.md](AGENTS.md) and ask it to
+The wizards, minions and giants are plain vector data. Point your coding agent at [AGENTS.md](AGENTS.md) and ask it to
 swap in your own cast: a samurai and a ninja, rival footballers, your own team at work. Use original characters, or keep a fan
 project private.
 

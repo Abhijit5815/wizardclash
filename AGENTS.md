@@ -1,17 +1,16 @@
 # AGENTS.md
 
 Hello, agent (and human reading over your agent's shoulder). This repo is **Wizard Clash**: two wizards fight across a web page,
-with shadow armies, giants and dragons. It is a drop-in library plus a demo page. Open `index.html` locally first and watch it for a
+with shadow armies and giants. It is a drop-in library plus a demo page. Open `index.html` locally first and watch it for a
 minute; there is a short clip in `docs/demo.gif`.
 
 ## Job 1: add it to someone's page
 
-Copy `src/` into their project and add these, in this order (the art files must load before the engine):
+Copy `src/` into their project and add these, in this order (the art file must load before the engine):
 
 ```html
 <link rel="stylesheet" href="src/wizardclash.css">
 <script src="src/army-art.js"></script>
-<script src="src/dragon-art.js"></script>
 <script src="src/wizardclash.js" data-header=".their-sticky-header"></script>
 ```
 
@@ -25,7 +24,7 @@ Copy `src/` into their project and add these, in this order (the art files must 
 ## Job 2: reskin the cast
 
 Ask for something like: "Replace the wizard and dark lord with a samurai and a ninja. Keep the fighting logic, change the art,
-the speech lines and the spell names. Replace the dragons with something of my own."
+the speech lines and the spell names."
 
 | Where | What |
 |---|---|
@@ -34,7 +33,6 @@ the speech lines and the spell names. Replace the dragons with something of my o
 | `LINES` | Every phrase the characters shout, including the fourth-wall lines about scrolling and idling. |
 | `MAGE`, `DARK` (`ART = [MAGE, DARK]`) | The two fighters: 60x80 units, facing right, feet at the bottom. `shapes` is the solid silhouette, `lines` the rim outline (the last entry is the wand), `shoulder`/`hand` anchor the casting arm, `tip` is where spells leave the wand. |
 | `src/army-art.js` | `ARMY.DEFS`: footman, skeleton, elf archer, hooded ranger, and a giant per side. Each is a 60x80 silhouette split into `back`, `legs`, `body`, `arm`; archers also have `rest` and `drawn` bow states. |
-| `src/dragon-art.js` | `DRAGONS`: three dragons cut into `wb`, `wf` (wings), `hd` (head), `t1`, `t2` (tail) and `base`, in image pixels, facing left, plus each one's own timing in `cfg`. |
 | Spells | `fire()`, `chainLightning()`, `staffSlam()`, `frostNova()`, `soulDrain()`, `castShield()`, meteors, portals. Rename and recolour them in `COL` / `buildBolt()`. |
 | `src/wizardclash.css` | The arena's look (team tints `.m0` / `.m1`, spell shocks, the buttons). |
 | `tools/silhouettes/` | Optional offline Python: turns a generated drawing into rig paths. Never loaded by the page. |
