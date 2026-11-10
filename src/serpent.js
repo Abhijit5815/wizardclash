@@ -74,7 +74,7 @@
   const resize = () => {
     dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
     cv.width = W * dpr; cv.height = H * dpr;
-    len = Math.max(240, Math.min(440, W * 0.36));  // the strip is mostly empty margin, so it needs length to read
+    len = Math.max(260, Math.min(500, W * 0.4));  // the strip is mostly empty margin, so it needs length to read
     ro = len / (0.85 * 2 * Math.PI) * 1.08;
     hw = (len * (img.naturalHeight || 164)) / (img.naturalWidth || 1000) / 2;
     coiled = false;
@@ -104,7 +104,7 @@
     if (b.fire >= 0) {
       const q = W < 700 ? 0.5 : 1, K = 1.5, aimY = b.ty + 18;      // phones get half the particles; aim a touch low, the heat will lift it
       const ax = b.tx - hx, ay = aimY - hy, ad = Math.hypot(ax, ay) + 1e-3, dx = ax / ad, dy = ay / ad;
-      for (let i = 0; i < 6 * q; i++) {             // the stream: launch speed chosen so drag brings it to the target as it dies
+      for (let i = 0; i < 8 * q; i++) {             // the stream: launch speed chosen so drag brings it to the target as it dies
         const j = (Math.random() - 0.5) * 0.16, life = 0.4 + Math.random() * 0.15, c = Math.cos(j), sn = Math.sin(j);
         const v = ((ad * K) / (1 - Math.exp(-K * life))) * (0.92 + Math.random() * 0.16);
         fx.push({ x: hx + dx * 12, y: hy + dy * 12, vx: (dx * c - dy * sn) * v, vy: (dx * sn + dy * c) * v, age: 0, max: life, heat: 1, size: 5 + Math.random() * 3, grow: 26, k: 0 });
@@ -119,8 +119,8 @@
       }
       b.hit += dt;
       // the Wizard Clash library exposes WizardClash.strike; kasanaa.com's own arena exposes Arena.strike
-      if (b.hit > 0.1) { b.hit = 0; (window.WizardClash?.strike || window.Arena?.strike)?.(b.tx, b.ty, 0, 0, 110, 3); }
-      if (b.t > b.fire + 1.3) { breath = null; scorch.push({ x: b.tx, y: b.ty, t: 0 }); }
+      if (b.hit > 0.1) { b.hit = 0; (window.WizardClash?.strike || window.Arena?.strike)?.(b.tx, b.ty, 0, 0, 170, 6); }
+      if (b.t > b.fire + 1.8) { breath = null; scorch.push({ x: b.tx, y: b.ty, t: 0 }); }
     }
     return true;
   }
@@ -200,7 +200,7 @@
       } else if (p.k === 3) { fg.globalAlpha = (1 - u) * (0.6 + 0.4 * Math.sin(p.age * 25 + p.x)); fg.drawImage(SPR[11], p.x - 4, p.y - 4, 8, 8); }
     }
     fg.globalAlpha = 1; fg.lineWidth = 2.5;
-    for (const o of rings) { fg.strokeStyle = `rgba(150,210,255,${0.6 * (1 - o.t)})`; fg.beginPath(); fg.arc(o.x, o.y, 15 + 210 * o.t, 0, 6.283); fg.stroke(); }   // shockwave
+    for (const o of rings) { fg.strokeStyle = `rgba(150,210,255,${0.6 * (1 - o.t)})`; fg.beginPath(); fg.arc(o.x, o.y, 15 + 300 * o.t, 0, 6.283); fg.stroke(); fg.beginPath(); fg.arc(o.x, o.y, 10 + 180 * o.t, 0, 6.283); fg.stroke(); }   // shockwave
     if (breath && breath.fire >= 0) { fg.globalAlpha = 0.8; fg.drawImage(SPR[14], hx - 34, hy - 34, 68, 68); }                                       // glow at the mouth
     g.globalCompositeOperation = "lighter";
     g.drawImage(fxc, 0, 0, W, H);                   // the fire itself
@@ -223,6 +223,11 @@
       const off = Math.sin(time * 9 - k * 0.45) * wig * (k / SEG);   // swimming ripple, grows toward the tail
       px[k] = bx[k] + nx[k] * off; py[k] = by[k] + ny[k] * off;
     }
+    sprites();
+    g.globalCompositeOperation = "lighter";       // aura: the body glows, fiercely while it breathes
+    g.globalAlpha = breath && breath.fire >= 0 ? 0.4 : 0.07;
+    for (let k = 0; k <= SEG; k += 3) g.drawImage(SPR[11], px[k] - hw * 3.2, py[k] - hw * 3.2, hw * 6.4, hw * 6.4);
+    g.globalAlpha = 1; g.globalCompositeOperation = "source-over";
     for (let k = 0; k < SEG; k++) {                 // segment between spine k (head side) and k+1 (tail side)
       const ex = px[k] - px[k + 1], ey = py[k] - py[k + 1];
       const mnx = (nx[k] + nx[k + 1]) / 2, mny = (ny[k] + ny[k + 1]) / 2;

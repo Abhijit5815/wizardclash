@@ -2365,8 +2365,10 @@ function boot(opts) {
   // or in a circle round it when dx = dy = 0. Called repeatedly while the dragon breathes fire.
   window.WizardClash.strike = (x, y, dx, dy, reach, dmg = 15) => {
     const front = (o) => { const ox = o.x - x, oy = o.y - y, d = Math.hypot(ox, oy) || 1; return d < reach && ((!dx && !dy) || (ox * dx + oy * dy) / d > 0.7); };   // no direction: a circular blast
-    for (const m of minions) if (!m.dying && front(m)) killMinion(m, { x: dx, y: dy });
-    for (const w of wiz) if (alive(w) && front(w)) hurt(w, { dmg, major: false, x: w.x, y: w.y, size: 1 });
+    let hit = 0;
+    for (const m of minions) if (!m.dying && front(m)) { killMinion(m, { x: dx, y: dy }); hit++; }
+    for (const w of wiz) if (alive(w) && front(w)) { hurt(w, { dmg, major: false, x: w.x, y: w.y, size: 1 }); hit++; }
+    if (hit) shake(3, 160);                             // the blast rattles the screen
   };
   if (Show.mode === "run") start();
   return true;
