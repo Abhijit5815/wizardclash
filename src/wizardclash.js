@@ -238,7 +238,7 @@ function boot(opts) {
   const rand = (a, b) => a + Math.random() * (b - a);
   const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
-  let size = 60, s = 0.75, top = 0, mh = 28, msc = 0.7;           // figure height (px), art scale, top of the arena
+  let size = 60, s = 0.75, top = 0, mh = 24, msc = 0.6;           // figure height (px), art scale, top of the arena
   let walls = [], wallsDirty = true;
 
   function readWalls() {
@@ -996,7 +996,7 @@ function boot(opts) {
   function newMinion(team, x, y, vx, vy, vz, face, big, archer) {
     const art = big ? GIANT[team] : archer ? (team ? RANGER : ELF) : MINI[team];
     const m = {
-      team, x, y, vx, vy, z: 0.1, vz, r: size * (big ? 0.48 : 0.22), hp: big ? R.giant.hp : archer ? R.minion.hp * 0.75 : R.minion.hp, ranged: !!archer, mass: big ? 8 : 1 + rand(0, 0.25), big: !!big, art, speedK: rand(0.9, 1.1),
+      team, x, y, vx, vy, z: 0.1, vz, r: size * (big ? 0.48 : 0.18), hp: big ? R.giant.hp : archer ? R.minion.hp * 0.75 : R.minion.hp, ranged: !!archer, mass: big ? 8 : 1 + rand(0, 0.25), big: !!big, art, speedK: rand(0.9, 1.1),
       face, walk: rand(0, 6), cd: rand(0.2, 0.6), swingT: 9, winding: false, flash: 0, squash: 0,
       dying: false, dieT: 0, dustT: 0, sense: R.minion.sense, searchA: rand(0, 6), baseA: face > 0 ? 0 : Math.PI, route: null, routeAt: 0, n: minionNode(team, art),
     };
@@ -1824,7 +1824,6 @@ function boot(opts) {
     const pick = (dragonIdx + 1 + Math.floor(Math.random() * (DRAGONS.length - 1))) % DRAGONS.length, def = DRAGONS[pick];
     dragonIdx = pick;
     g.innerHTML = dragonRig(def);
-    g.setAttribute("filter", "url(#dout)");
     const sh = el("ellipse", { rx: 1, ry: 0.16, fill: "rgba(0,0,0,.4)" }, ground);
     dragon = { g, sh, dir, jaw: 0, rig: Object.fromEntries([...g.querySelectorAll("[data-r]")].map((n) => [n.dataset.r, n])), def, cfg: def.cfg, mouth: g.querySelector(".dmouth"), glow: el("circle", { r: 150, fill: "url(#halo-orange)", opacity: 0 }, fxg), sc: (clamp(innerWidth * 0.28, 120, 400) / 113) * def.cfg.scale, x: dir > 0 ? -300 : innerWidth + 300, y: 0, t0: clock, hitAt: 0, glowAt: 0, roared: false };
     cineUntil = Math.max(cineUntil, clock + 5);
@@ -2237,7 +2236,7 @@ function boot(opts) {
     s = size / 80;
     const k = Math.min(1, size / 72);    // 72px is a 720px-tall desktop window: unchanged from there up
     for (const [a, b] of SCALED) { if (b) R[a][b] = R0[a][b] * k; else R[a] = R0[a] * k; }
-    mh = size * 0.66;
+    mh = size * 0.55;
     msc = mh / 40;
     for (const e of [...(wiz || []), ...clones]) e.r = size * 0.34;
     for (const m of minions) m.r = size * (m.big ? 0.48 : 0.22);
@@ -2362,6 +2361,13 @@ function boot(opts) {
     was = m;
     if (m === "run") { start(); svg.unpauseAnimations?.(); fxSvg.unpauseAnimations?.(); } else { stop(); svg.pauseAnimations?.(); fxSvg.pauseAnimations?.(); }
   });
+  // Hook for serpent.js (the cursor dragon): WizardClash.strike(x, y, dx, dy, reach, dmg) hits every minion and wizard in a cone ahead of (x, y),
+  // or in a circle round it when dx = dy = 0. Called repeatedly while the dragon breathes fire.
+  window.WizardClash.strike = (x, y, dx, dy, reach, dmg = 15) => {
+    const front = (o) => { const ox = o.x - x, oy = o.y - y, d = Math.hypot(ox, oy) || 1; return d < reach && ((!dx && !dy) || (ox * dx + oy * dy) / d > 0.7); };   // no direction: a circular blast
+    for (const m of minions) if (!m.dying && front(m)) killMinion(m, { x: dx, y: dy });
+    for (const w of wiz) if (alive(w) && front(w)) hurt(w, { dmg, major: false, x: w.x, y: w.y, size: 1 });
+  };
   if (Show.mode === "run") start();
   return true;
 }

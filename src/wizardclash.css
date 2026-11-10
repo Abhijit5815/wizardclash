@@ -3,7 +3,7 @@
 /* --- wizard duel: a full-viewport overlay that never takes a click --- */
 :is(#arena, #arenafx) { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; overflow: visible; }
 :is(#arena, #arenafx) symbol { overflow: visible; }
-:is(#arena, #arenafx) .ink { fill: none; stroke: var(--wiz-ink, #d6cfc2); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+:is(#arena, #arenafx) .ink { fill: none; stroke: var(--wiz-ink, #060505); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 :is(#arena, #arenafx) .ink.ghost { stroke-width: 0.9; opacity: 0.4; }
 :is(#arena, #arenafx) .fill-light { fill: #060505; }   /* wizards are solid shadows now */
 :is(#arena, #arenafx) .fill-dark { fill: #060505; }
@@ -33,25 +33,23 @@
 :is(#arena, #arenafx) .haste { stroke: #f2c94c; fill: #f2c94c; color: #f2c94c; }
 :is(#arena, #arenafx) .aura { fill: url(#streakGlow); }
 :is(#arena, #arenafx) .streak { fill: #f2c94c; font: 600 10px "JetBrains Mono", monospace; letter-spacing: 0.06em; text-anchor: middle; }
-:is(#arena, #arenafx) .talk path { fill: rgba(13, 10, 8, 0.9); stroke: #d6cfc2; stroke-width: 1.2; stroke-linejoin: round; }
-:is(#arena, #arenafx) .talk path + path { fill: none; stroke-width: 0.7; opacity: 0.45; }
-:is(#arena, #arenafx) .talk text { fill: #f0e6d2; font: 400 15px "IM Fell English", Georgia, serif; text-anchor: middle; }
+:is(#arena, #arenafx) .talk path { display: none; }   /* no box: just the words, like a caption */
+:is(#arena, #arenafx) .talk text { fill: #f0e6d2; font: 400 16px "IM Fell English", Georgia, serif; text-anchor: middle; paint-order: stroke; stroke: #0d0a08; stroke-width: 4px; stroke-linejoin: round; }
 /* --- horde: minions, rune circles, cinematic bars --- */
 :is(#arena, #arenafx) .m0 { --mc: #000; --mf: #000; --md: #000; --ml: #000; --eye: #dfffe9; }
 :is(#arena, #arenafx) .m1 { --mc: #000; --mf: #000; --md: #000; --ml: #000; --eye: #ff5a6a; }
-:is(#arena, #arenafx) .m0 { --ink: #5f786b; }
-:is(#arena, #arenafx) .m1 { --ink: #7d5a60; }
-:is(#arena, #arenafx) .minion .ink { stroke: var(--wc-ink, #f0e6d2); stroke-width: 2; }
+:is(#arena, #arenafx) .m0 { --ink: #060505; }
+:is(#arena, #arenafx) .m1 { --ink: #060505; }
+:is(#arena, #arenafx) .minion .ink { stroke: var(--wc-ink, #060505); stroke-width: 2; }
 :is(#arena, #arenafx) .minion .ink.ghost { stroke-width: 1; opacity: 0.4; }
 :is(#arena, #arenafx) .minion .fill-light { fill: #060505; }   /* opaque, so text never shows through a body */
-:is(#arena, #arenafx) .minion.hit { --mc: #fff; --ink: #cfc8bd; }   /* a hit flashes the outline white */
 :is(#arena, #arenafx) .k { fill: none; stroke: var(--mc); stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; }
 :is(#arena, #arenafx) .k.kt { stroke-width: 0.6; opacity: 0.8; }
 :is(#arena, #arenafx) .k.kk { stroke-width: 1.6; }
 :is(#arena, #arenafx) .kf { fill: var(--mf); stroke: var(--mc); stroke-width: 1.15; stroke-linejoin: round; stroke-linecap: round; }
 :is(#arena, #arenafx) .kd { fill: var(--md); stroke: var(--mc); stroke-width: 1.15; stroke-linejoin: round; }
 :is(#arena, #arenafx) .kl { fill: var(--ml); stroke: var(--mc); stroke-width: 0.95; stroke-linejoin: round; }
-:is(#arena, #arenafx) .kh, :is(#arena, #arenafx) .hatch { fill: url(#hatch); stroke: none; }
+:is(#arena, #arenafx) .kh, :is(#arena, #arenafx) .hatch { display: none; }   /* pale hatching removed: figures are plain dark shadows */
 :is(#arena, #arenafx) .minion .kh { display: none; }
 :is(#arena, #arenafx) .arw { fill: none; stroke: #eaf4ee; stroke-width: 0.9; stroke-linecap: round; }
 :is(#arena, #arenafx) .arwh { fill: #eaf4ee; stroke: none; }

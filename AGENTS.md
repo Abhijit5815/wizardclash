@@ -15,6 +15,7 @@ Copy `src/` into their project and add these, in this order (the art files must 
 <script src="src/wizardclash.js" data-header=".their-sticky-header"></script>
 ```
 
+- Optional cursor dragon: also add `<script src="src/serpent.js"></script>` after `wizardclash.js` and copy `src/serpent-strip.png` next to it. It calls `WizardClash.strike` and obeys Petrify / Silence. Keep the ok100 CC BY 4.0 credit (see README).
 - Walls: set `data-walls` (or `WizardClash.start({ walls })`) to the selectors that hold the page's text, cards and images. Do not
   list huge containers: a full-width wrapper would wall in the whole screen.
 - Header: pass a selector only if the page has a fixed or sticky header.

@@ -20,6 +20,19 @@ Copy the `src` folder next to your page, then:
 
 That's it. Try the demo: `python3 -m http.server 8000` and open http://localhost:8000.
 
+## Optional: the cursor dragon
+
+Add one more line after `wizardclash.js` and a dragon circles your cursor. Double-click a spot and it breathes blue fire there
+(buoyancy, turbulence, drag, bouncing sparks, smoke, embers, bloom). The blast kills minions and hurts wizards in range.
+
+```html
+<script src="src/serpent.js"></script>
+```
+
+It loads `serpent-strip.png` from the same folder, and follows the same rules as the show: off under reduced motion, frozen by
+*Petrify*, hidden by *Silence*. Dragon art: ["chinese dragon"](https://sketchfab.com/3d-models/chinese-dragon-1d1a07b607b741e08dcb93e594d3e883) by ok100,
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); keep that credit if you ship it.
+
 ## Options
 
 Put them on the script tag, or start it yourself with `data-manual` and call `WizardClash.start({ ... })`.
